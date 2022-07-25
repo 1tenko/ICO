@@ -73,6 +73,56 @@ export default function Home() {
     }
   };
 
+  // checks balance of tokens that can be claimed by user
+  const getTokensToBeClaimed = async () => {
+    try {
+      // get provider, no need for signer as we are only reading state from the blockchain
+      const provider = await getProviderOrSigner();
+
+      // create instance of nft contract
+      const nftContract = new Contract(
+        NFT_CONTRACT_ADDRESS,
+        NFT_CONTRACT_ABI,
+        provider
+      );
+
+      // create instance of token contract
+      const tokenContract = new Contract(
+        TOKEN_CONTRACT_ADDRESS,
+        TOKEN_CONTRACT_ABI,
+        provider
+      );
+
+      // get signer to extract address of the currently connected metamask account
+      const signer = await getProviderOrSigner(true);
+      const address = await signer.getAddress();
+
+      // call balanceOf from the NFT contract to get number of NFTs held by user
+      const balance = await nftContract.balanceOf(address);
+
+      // balance is BigNumber so we compare it to 'zero
+      if (balance === zero) {
+        setTokensToBeClaimed(zero);
+      } else {
+        let amount = 0;
+
+        // check fi tokens have been claimed for all NFT's
+        for (let i = 0; i < balance; i++) {
+          const tokenId = await nftContract.tokenOfOwnerByIndex(address, i);
+          const claimed = await tokenContract.tokenIdsClaimed(tokenId);
+          if (!claimed) {
+            amount++;
+          }
+        }
+        // setTokensToBeClaimed initialized to bigNumber, so need to convert the amount
+        setTokensToBeClaimed(BigNumber.from(amount));
+      }
+    } catch (err) {
+      console.error(err);
+      setTokensToBeClaimed(zero);
+    }
+  };
+
   return (
     <div>
       <h1>Hello</h1>
