@@ -1,24 +1,24 @@
-// We require the Hardhat Runtime Environment explicitly here. This is optional
-// but useful for running the script in a standalone fashion through `node <script>`.
-//
-// You can also run a script with `npx hardhat run <script>`. If you do that, Hardhat
-// will compile your contracts, add the Hardhat Runtime Environment's members to the
-// global scope, and execute the script.
-const hre = require("hardhat");
+const { ethers } = require("hardhat");
+require("dotenv").config({ path: ".env" });
+const { CRYPTO_DEVS_NFT_CONTRACT_ADDRESS } = require("../constants");
 
 async function main() {
-  const currentTimestampInSeconds = Math.round(Date.now() / 1000);
-  const ONE_YEAR_IN_SECS = 365 * 24 * 60 * 60;
-  const unlockTime = currentTimestampInSeconds + ONE_YEAR_IN_SECS;
+  // address of the Crypto Devs NFT contract
+  const cryptoDevsNFTContract = CRYPTO_DEVS_NFT_CONTRACT_ADDRESS;
 
-  const lockedAmount = hre.ethers.utils.parseEther("1");
+  // deploy token contract
+  const cryptoDevsTokenContract = await ethers.getContractFactory(
+    "CryptoDevToken"
+  );
+  const deployedCryptoDevsTokenContract = await cryptoDevsTokenContract.deploy(
+    cryptoDevsNFTContract
+  );
 
-  const Lock = await hre.ethers.getContractFactory("Lock");
-  const lock = await Lock.deploy(unlockTime, { value: lockedAmount });
-
-  await lock.deployed();
-
-  console.log("Lock with 1 ETH deployed to:", lock.address);
+  // print address of deployed contract
+  console.log(
+    "Crypto Devs Token Contract Address: ",
+    deployedCryptoDevsTokenContract.address
+  );
 }
 
 // We recommend this pattern to be able to use async/await everywhere
