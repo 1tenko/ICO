@@ -39,6 +39,40 @@ export default function Home() {
 
   // Create a reference to the Web3 Modal (used for connecting to Metamask) which persists as long as the page is open
   const web3ModalRef = useRef();
+
+  // true if you need signer, default false otherwise
+  const getProviderOrSigner = async (needSigner = false) => {
+    // connect to metamask
+    // since we store 'web3modal' as a reference, we need to access the 'current' value to get access to the underlying object
+    const provider = await web3ModalRef.current.connect();
+    const web3provider = new providers.Web3Provider(provider);
+
+    // if user not connected to rinkeby network, throw an error
+    const { chainId } = await web3provider.getNetwork();
+    if (chainId !== 4) {
+      window.alert("Change the network to Rinkeby");
+      throw new Error("Change network to Rinkeby");
+    }
+
+    if (needSigner) {
+      const signer = web3provider.getSigner();
+      return signer;
+    }
+
+    return web3provider;
+  };
+
+  // connects Metamask wallet
+  const connectWallet = async () => {
+    try {
+      // when used for first time, prompts user to connect wallet
+      await getProviderOrSigner();
+      setWalletConnected(true);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   return (
     <div>
       <h1>Hello</h1>
