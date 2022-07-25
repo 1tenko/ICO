@@ -153,7 +153,19 @@ export default function Home() {
 
   return (
     <div>
-      <h1>Hello</h1>
+      <Head>
+        <title>Crypto Devs</title>
+        <meta name="description" content="ICO-Dapp" />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+      <div className={styles.main}>
+        <div>
+          <h1 className={styles.title}>Welcome to Crypto Devs</h1>
+          <div className={styles.description}>
+            You can claim or mint Crypto Dev tokens here
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
