@@ -185,7 +185,25 @@ export default function Home() {
   };
 
   // retrieves how many tokens have been minted till now out of total supply
-  const getTotalTokensMinted = async () => {};
+  const getTotalTokensMinted = async () => {
+    try {
+      // no need for signer as we are only reading state from blockchain
+      const provider = await getProviderOrSigner();
+
+      // create instance of token contract
+      const tokenContract = new Contract(
+        TOKEN_CONTRACT_ADDRESS,
+        TOKEN_CONTRACT_ABI,
+        provider
+      );
+
+      // get all tokens that have been minted
+      const _tokensMinted = await tokenContract.totalSupply();
+      setTokensMinted(_tokensMinted);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   return (
     <div>
