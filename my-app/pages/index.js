@@ -123,6 +123,34 @@ export default function Home() {
     }
   };
 
+  // checks the balance of Crypto Dev Tokens held by an address
+  const getBalanceOfCryptoDevTokens = async () => {
+    try {
+      // no need for signer as we are only reading state
+      const provider = await getProviderOrSigner();
+
+      // create instance of token contract
+      const tokenContract = new Contract(
+        TOKEN_CONTRACT_ADDRESS,
+        TOKEN_CONTRACT_ABI,
+        provider
+      );
+
+      // ned signer to extract the address of currently connected account
+      const signer = await getProviderOrSigner(true);
+      const address = await signer.getAddress();
+
+      // get number of tokens held by user
+      const balance = await tokenContract.balanceOf(address);
+
+      // balance is already big number so no need to convert it
+      setBalanceOfCryptoDevTokens(balance);
+    } catch (err) {
+      console.error(err);
+      setBalanceOfCryptoDevTokens(zero);
+    }
+  };
+
   return (
     <div>
       <h1>Hello</h1>
