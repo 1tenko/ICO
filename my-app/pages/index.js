@@ -151,6 +151,42 @@ export default function Home() {
     }
   };
 
+  // mints 'amount' number of tokens to a given address
+  const mintCryptoDevToken = async (amount) => {
+    try {
+      // need signer as this is a 'write' transaction
+      const signer = await getProviderOrSigner(true);
+      // create instance of token Contract
+      const tokenContract = new Contract(
+        TOKEN_CONTRACT_ADDRESS,
+        TOKEN_CONTRACT_ABI,
+        signer
+      );
+
+      // each token is of '0.001 eth', the value we need to send is '0.001 * amount'
+      const value = 0.001 * amount;
+
+      const tx = await tokenContract.mint(amount, {
+        // parsing '0.001' string to ether
+        value: utils.parseEther(value.toString()),
+      });
+
+      setLoading(true);
+
+      await tx.wait();
+      setLoading(false);
+      window.alert("Sucesfully minted Crypto Dev Tokens");
+      await getBalanceOfCryptoDevTokens();
+      await getTotalTokensMinted();
+      await getTokensToBeClaimed();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  // retrieves how many tokens have been minted till now out of total supply
+  const getTotalTokensMinted = async () => {};
+
   return (
     <div>
       <Head>
