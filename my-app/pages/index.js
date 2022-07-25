@@ -281,6 +281,22 @@ export default function Home() {
     }
   };
 
+  useEffect(() => {
+    // if wallet is not connected, create new instance of web3modal and connect wallet
+    if (!walletConnected) {
+      web3ModalRef.current = new Web3Modal({
+        network: "rinkeby",
+        providerOptions: {},
+        disableInjectedProvider: false,
+      });
+      connectWallet();
+      getTotalTokensMinted();
+      getBalanceOfCryptoDevTokens();
+      getTokensToBeClaimed();
+      withdrawCoins();
+    }
+  }, [walletConnected]);
+
   return (
     <div>
       <Head>
