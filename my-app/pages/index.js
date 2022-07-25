@@ -233,6 +233,54 @@ export default function Home() {
     }
   };
 
+  // gets the contract owner by connected address
+  const getOwner = async () => {
+    try {
+      const provider = await getProviderOrSigner();
+
+      const tokenContract = new Contract(
+        TOKEN_CONTRACT_ADDRESS,
+        TOKEN_CONTRACT_ABI,
+        provider
+      );
+
+      const _owner = await tokenContract.owner();
+
+      // need signer to extract address of currently connected wallet
+      const signer = await getProviderOrSigner(true);
+
+      const address = await signer.getAddress();
+
+      if (address.toLowerCase() === _owner.toLowerCase()) {
+        setIsOwner(true);
+      }
+    } catch (err) {
+      console.error(err.message);
+    }
+  };
+
+  // withdraws ether and tokens by calling withdraw function from contract
+  const withdrawCoins = async () => {
+    try {
+      const signer = await getProviderOrSigner(true);
+
+      const tokenContract = new Contract(
+        TOKEN_CONTRACT_ADDRESS,
+        TOKEN_CONTRACT_ABI,
+        signer
+      );
+
+      const tx = await tokenContract.withdraw();
+
+      setLoading(true);
+      await tx.wait();
+      setLoading(false);
+      await getOwner();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   return (
     <div>
       <Head>
