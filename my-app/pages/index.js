@@ -184,6 +184,34 @@ export default function Home() {
     }
   };
 
+  // helps user claim crypto dev tokens
+  const claimCryptoDevTokens = async () => {
+    try {
+      // signer because it's a write transactions
+      const signer = await getProviderOrSigner(true);
+
+      const tokenContract = new Contract(
+        TOKEN_CONTRACT_ADDRESS,
+        TOKEN_CONTRACT_ABI,
+        signer
+      );
+
+      const tx = await tokenContract.claim();
+
+      setLoading(true);
+
+      await tx.wait();
+      setLoading(false);
+
+      window.alert("Successfully claimed Crypto Dev Tokens");
+      await getBalanceOfCryptoDevTokens();
+      await getTotalTokensMinted();
+      await getTokensToBeClaimed();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   // retrieves how many tokens have been minted till now out of total supply
   const getTotalTokensMinted = async () => {
     try {
