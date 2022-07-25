@@ -12,5 +12,5 @@ interface ICryptoDevs {
         returns (uint256 tokenId);
 
     // returns the number of tokens in "owner"'s account
-    function valancOf(address owner) external view returns (uint256 balance);
+    function balanceOf(address owner) external view returns (uint256 balance);
 }
